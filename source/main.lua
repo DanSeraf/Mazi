@@ -1,5 +1,6 @@
 local Maze = require "maze"
 local generators = require "maze.generators"
+local loveframes = require "frames"
 
 local draw_maze;
 local maze;
@@ -22,11 +23,7 @@ local generators_aliases =
 
 local generators_aliases_rev;
 
-
 function love.load()
-  -- seems like a weird place to put require to, but whatever, documentation says so...
-  require "frames"
-  
   if arg[#arg] == "-debug" then require("mobdebug").start() end
   
   generators_aliases_rev = {}
@@ -76,10 +73,10 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setBackgroundColor(100, 100, 200)
-  draw_maze(maze, 10, 10, 20, 10, { 150, 150, 200 }, { 20, 20, 100 })
+  love.graphics.setBackgroundColor(100/255, 100/255, 200/255)
+  draw_maze(maze, 10, 10, 20, 10, { 150/255, 150/255, 200/255 }, { 20/255, 20/255, 100/255 })
   love.graphics.setColor(255, 255, 255)
-  
+
   loveframes.draw()
 end
  
@@ -99,7 +96,7 @@ function love.keyreleased(key)
   loveframes.keyreleased(key) 
 end
 
-draw_maze = function(maze, x, y, cell_dim, wall_dim, cell_col, wall_col)
+function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col)
   love.graphics.setColor(wall_col)
   local maze_width = (cell_dim + wall_dim) * #maze[1] + wall_dim
   local maze_height = (cell_dim + wall_dim) * #maze + wall_dim
