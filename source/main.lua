@@ -1,6 +1,7 @@
 local Maze = require "maze"
 local generators = require "maze.generators"
 local loveframes = require "frames"
+local RecursiveScan = require "maze.solvers.recsolve"
 
 local draw_maze;
 local maze;
@@ -52,7 +53,8 @@ function love.load()
         local time = love.timer.getTime()
         generators[name](maze)
         time = love.timer.getTime() - time
-        
+        maze:OpenDoors()
+        maze:ResetVisited()
         text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
       end
     
@@ -70,13 +72,17 @@ end
 
 function love.update(dt)
   loveframes.update(dt) 
+  RecursiveScan(maze, 1, 1)
 end
 
 function love.draw()
   love.graphics.setBackgroundColor(100/255, 100/255, 200/255)
-  draw_maze(maze, 10, 10, 20, 10, { 150/255, 150/255, 200/255 }, { 20/255, 20/255, 100/255 })
+  cell_color = { 150/255, 150/255, 200/255 }
+  wall_color = { 20/255, 20/255, 100/255 }
+  point_col = { 0/255, 100/255, 0/255 }
+  draw_maze(maze, 10, 10, 20, 10, cell_color, wall_color, point_col)
   love.graphics.setColor(255, 255, 255)
-
+  
   loveframes.draw()
 end
  
@@ -96,18 +102,23 @@ function love.keyreleased(key)
   loveframes.keyreleased(key) 
 end
 
-function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col)
+function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col)
   love.graphics.setColor(wall_col)
   local maze_width = (cell_dim + wall_dim) * #maze[1] + wall_dim
   local maze_height = (cell_dim + wall_dim) * #maze + wall_dim
   love.graphics.rectangle("fill", x, y, maze_width, maze_height)
-  
   love.graphics.setColor(cell_col)
+  
   for yi = 1, #maze do
     for xi = 1, #maze[1] do
       local pos_x = x + (cell_dim + wall_dim) * (xi - 1) + wall_dim
       local pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
       love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
+      if maze[yi][xi].visited == true then
+        love.graphics.setColor(point_col)
+        love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
+        love.graphics.setColor(cell_col)
+      end
       
       -- Need to redo this, badly...
       if maze[yi][xi].north:IsOpened() then
