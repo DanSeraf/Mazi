@@ -19,7 +19,6 @@ function RecursiveScan(maze, xc, yc)
     if maze[xc][yc].east:IsVisited() then
       maze[xc][yc].east:SetBlocked()
       print('blocking: ('..xc..','..yc..')')
-      RecursiveScan(maze, xc, yc+1)
     end
     print( 'East node found: { '..xc..','..yc..' }' )
     maze[xc][yc].east:SetVisited()
@@ -34,7 +33,6 @@ function RecursiveScan(maze, xc, yc)
     end
     if maze[xc][yc].south:IsVisited() then
       maze[xc][yc].south:SetBlocked()
-      RecursiveScan(maze, xc+1, yc)
     end
     print( 'South node found: { '..xc..','..yc..' }' )
     maze[xc][yc].south:SetVisited()
@@ -45,7 +43,6 @@ function RecursiveScan(maze, xc, yc)
   if maze[xc][yc].west:IsOpened() and maze[xc][yc].west:IsBlocked() == false then
     if maze[xc][yc].west:IsVisited() then
       maze[xc][yc].west:SetBlocked()
-      RecursiveScan(maze, xc, yc-1)
     end
     print( 'West node found: { '..xc..','..yc..' }' )
     maze[xc][yc].west:SetVisited()
@@ -56,7 +53,6 @@ function RecursiveScan(maze, xc, yc)
   if maze[xc][yc].north:IsOpened() and maze[xc][yc].north:IsBlocked() == false then
     if maze[xc][yc].north:IsVisited() then
       maze[xc][yc].north:SetBlocked()
-      RecursiveScan(maze, xc-1, yc)
     end
     print( 'North node found: { '..xc..','..yc..' }' )
     maze[xc][yc].north:SetVisited()

@@ -1,6 +1,6 @@
 local Maze = require "maze"
 local generators = require "maze.generators"
-local loveframes = require "frames"
+local loveframes = require "LoveFrames.loveframes"
 local RecursiveScan = require "maze.solvers.recsolve"
 
 local draw_maze;

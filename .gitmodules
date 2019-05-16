@@ -1,3 +1,6 @@
 [submodule "source/frames"]
 	path = source/frames
 	url = git@github.com:NikolaiResokav/LoveFrames.git
+[submodule "source/LoveFrames"]
+	path = source/LoveFrames
+	url = https://github.com/linux-man/LoveFrames.git
