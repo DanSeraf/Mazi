@@ -121,6 +121,16 @@ function Maze.tostring(maze, wall, passage)
   return result
 end
 
+function Maze:GetCoord(node)
+  for y = 1, #self do
+    for x = 1, #self[1] do
+      if self[y][x] == node then
+        return x, y
+      end
+    end
+  end
+end
+
 Maze.__tostring = Maze.tostring
 
 function Maze:CreateDoor(closed)

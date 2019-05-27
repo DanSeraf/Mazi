@@ -1,13 +1,11 @@
 local Maze = require "maze"
+_ENV = nil
 
 function sleep(n)
     os.execute("sleep " .. tonumber(n))
 end
 
---keep track of last door used
---block till end is reached
-
-function RecursiveScan(maze, xc, yc)
+function WallBlocker(maze, xc, yc)
   print("scanning node: { "..xc..","..yc.." }")
   if xc == maze:width() 
     and yc == maze:height() 
@@ -23,7 +21,7 @@ function RecursiveScan(maze, xc, yc)
     print( 'East node found: { '..xc..','..yc..' }' )
     maze[xc][yc].east:SetVisited()
     maze[xc][yc].visited = true
-    RecursiveScan(maze, xc, yc+1)
+    WallBlocker(maze, xc, yc+1)
   end
 
   if maze[xc][yc].south:IsOpened() and maze[xc][yc].south:IsBlocked() == false then
@@ -37,7 +35,7 @@ function RecursiveScan(maze, xc, yc)
     print( 'South node found: { '..xc..','..yc..' }' )
     maze[xc][yc].south:SetVisited()
     maze[xc][yc].visited = true
-    RecursiveScan(maze, xc+1, yc)
+    WallBlocker(maze, xc+1, yc)
   end
 
   if maze[xc][yc].west:IsOpened() and maze[xc][yc].west:IsBlocked() == false then
@@ -47,7 +45,7 @@ function RecursiveScan(maze, xc, yc)
     print( 'West node found: { '..xc..','..yc..' }' )
     maze[xc][yc].west:SetVisited()
     maze[xc][yc].visited = true
-    RecursiveScan(maze, xc, yc-1)
+    WallBlocker(maze, xc, yc-1)
   end
 
   if maze[xc][yc].north:IsOpened() and maze[xc][yc].north:IsBlocked() == false then
@@ -57,8 +55,8 @@ function RecursiveScan(maze, xc, yc)
     print( 'North node found: { '..xc..','..yc..' }' )
     maze[xc][yc].north:SetVisited()
     maze[xc][yc].visited = true
-    RecursiveScan(maze, xc-1, yc)
+    WallBlocker(maze, xc-1, yc)
   end
 end
 
-return RecursiveScan
+return WallBlocker

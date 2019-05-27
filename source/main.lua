@@ -1,7 +1,8 @@
 local Maze = require "maze"
 local generators = require "maze.generators"
 local loveframes = require "LoveFrames.loveframes"
-local RecursiveScan = require "maze.solvers.recsolve"
+local wallblocker = require "maze.solvers.wallblocker"
+local solvers = require "maze.solvers"
 
 local draw_maze;
 local maze;
@@ -22,6 +23,12 @@ local generators_aliases =
   wilson                = "Wilson's algorithm"
 }
 
+local solvers_aliases = 
+{
+  wallblocker = "Wall Blocker",
+  astar = "A Star"
+}
+
 local generators_aliases_rev;
 
 function love.load()
@@ -35,35 +42,59 @@ function love.load()
   -- Interface
   local margin = 10
   local width_franction = 0.3
+ 
+  --[[ Maze generators frame ]]--
+  local mframe = loveframes.Create("frame")
+  mframe:SetName("Maze generators")
+  mframe.width = love.graphics.getWidth() * width_franction
+  mframe.height = love.graphics.getHeight() - margin * 8
+  mframe.x = love.graphics.getWidth() - mframe.width - margin
+  mframe.y = margin
+  mframe:SetDraggable(false):ShowCloseButton(false)
   
-  local frame = loveframes.Create("frame")
-  frame:SetName("Maze generation")
-  frame.width = love.graphics.getWidth() * width_franction
-  frame.height = love.graphics.getHeight() - margin * 2
-  frame.x = love.graphics.getWidth() - frame.width - margin
-  frame.y = margin
-  frame:SetDraggable(false):ShowCloseButton(false)
-  
-  local generators_list = loveframes.Create("list", frame)
-  generators_list:SetPos(margin, 25 + margin):SetSize(frame.width - margin * 2, frame.height * 0.475)
+  local generators_list = loveframes.Create("list", mframe)
+  generators_list:SetPos(margin, 25 + margin):SetSize(mframe.width - margin * 2, mframe.height * 0.475)
   for name, generator in pairs(generators) do
     local button = loveframes.Create("button")
     button:SetText(generators_aliases[name])
     button.OnClick = function(obj)
         local time = love.timer.getTime()
+        maze:ResetVisited()
         generators[name](maze)
         time = love.timer.getTime() - time
-        maze:OpenDoors()
-        maze:ResetVisited()
         text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
       end
     
     generators_list:AddItem(button)
   end
   
-  text = loveframes.Create("text", frame)
+  text = loveframes.Create("text", mframe)
   text:SetPos(margin, generators_list.y + generators_list.height + 50)
-  text:SetSize(frame.width - margin * 2, frame.height * 0.3)
+  text:SetSize(mframe.width - margin * 2, mframe.height * 0.3)
+  --[[ end of frame ]]--
+  
+  --[[ Solvers frame ]]--
+  local sframe = loveframes.Create("frame")
+  sframe:SetName("Solvers")
+  sframe.width = 50
+  sframe.height = love.graphics.getHeight() - margin * 2
+  sframe.x = love.graphics.getWidth() - sframe.width - margin
+  sframe.y = margin
+  sframe:SetDraggable(false):ShowCloseButton(false)
+
+  local solvers_list = loveframes.Create("list", sframe)
+  solvers_list:SetPos(margin, 300 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.125)
+  for algo, name in pairs(solvers_aliases) do
+    local button = loveframes.Create("button")
+    button:SetText(name)
+    button.OnClick = function(obj)
+      maze:OpenDoors()
+      solvers[algo](maze, 1, 1)      
+    end
+
+    solvers_list:AddItem(button)
+  end
+  --[[ end of frame]]--
   
   -- Maze creation and misc
   maze = Maze:new(17, 19, true)
@@ -72,7 +103,6 @@ end
 
 function love.update(dt)
   loveframes.update(dt) 
-  RecursiveScan(maze, 1, 1)
 end
 
 function love.draw()
