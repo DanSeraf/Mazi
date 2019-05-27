@@ -85,6 +85,10 @@ function Maze:ResetVisited()
   for y = 1, #self do
     for x = 1, #self[1] do
       self[y][x].visited = nil
+      self[y][x].south:ResetStates()
+      self[y][x].north:ResetStates()
+      self[y][x].east:ResetStates()
+      self[y][x].south:ResetStates()
     end
   end
 end

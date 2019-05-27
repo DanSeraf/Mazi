@@ -88,6 +88,7 @@ function love.load()
     local button = loveframes.Create("button")
     button:SetText(name)
     button.OnClick = function(obj)
+      maze:ResetVisited()
       maze:OpenDoors()
       solvers[algo](maze, 1, 1)      
     end

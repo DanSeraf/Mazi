@@ -17,8 +17,6 @@ function nodeScan(maze, node)
   for move, door in pairs(doors) do
     if door:IsOpened() then
       print('door found: ' .. move)
-      print('at coord')
-      print(y+directions[move]['y'] .. ' ' .. x+directions[move]['x'])
       table.insert(neighbornodes, maze[y + directions[move]['y']][x + directions[move]['x']])
     end
   end
@@ -64,12 +62,6 @@ function astar(maze, x, y)
   function sleep(n)
     os.execute('sleep '..n)
   end
-
-  function see(c)
-    for _, e in pairs(c) do
-      print(e)
-    end
-  end
   
   local open = priorityqueue.new()
   local closed = {}
@@ -89,10 +81,10 @@ function astar(maze, x, y)
     if current.south:IsExit() then current.visited = true return generateFullPath(cameFrom, maze) end
 
     table.insert(closed, current)
-    print(nodeInside(closed, current))
+    
     for _, node in pairs(nodeScan(maze, current)) do
       
-      if nodeInside(closed, node) then see(closed) goto continue end
+      if nodeInside(closed, node) then goto continue end
 
       gScore_att = gScore[current] + 1
       
