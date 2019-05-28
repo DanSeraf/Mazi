@@ -4,7 +4,6 @@ local loveframes = require "LoveFrames.loveframes"
 local wallblocker = require "maze.solvers.wallblocker"
 local solvers = require "maze.solvers"
 
-local draw_maze;
 local maze;
 local text;
 
@@ -134,6 +133,14 @@ function love.keyreleased(key)
 end
 
 function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col)
+  walls = 
+  {
+    north = function(current) if current.north:IsOpened() then love.graphics.rectangle("fill", pos_x, pos_y - wall_dim, cell_dim, wall_dim) end end,
+    east = function(current) if current.east:IsOpened() then love.graphics.rectangle("fill", pos_x + cell_dim, pos_y, wall_dim, cell_dim) end end,
+    south = function(current) if current.south:IsOpened() then love.graphics.rectangle("fill", pos_x, pos_y + cell_dim, cell_dim, wall_dim) end end,
+    west = function(current) if current.west:IsOpened() then love.graphics.rectangle("fill", pos_x - wall_dim, pos_y, wall_dim, cell_dim) end end
+  }
+
   love.graphics.setColor(wall_col)
   local maze_width = (cell_dim + wall_dim) * #maze[1] + wall_dim
   local maze_height = (cell_dim + wall_dim) * #maze + wall_dim
@@ -142,8 +149,10 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
   
   for yi = 1, #maze do
     for xi = 1, #maze[1] do
-      local pos_x = x + (cell_dim + wall_dim) * (xi - 1) + wall_dim
-      local pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
+      current = maze[yi][xi]
+      doors = { south = current.south, north = current.north, east = current.east, west = current.west}
+      pos_x = x + (cell_dim + wall_dim) * (xi - 1) + wall_dim
+      pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
       love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
       if maze[yi][xi].visited == true then
         love.graphics.setColor(point_col)
@@ -151,19 +160,10 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
         love.graphics.setColor(cell_col)
       end
       
-      -- Need to redo this, badly...
-      if maze[yi][xi].north:IsOpened() then
-        love.graphics.rectangle("fill", pos_x, pos_y - wall_dim, cell_dim, wall_dim)
+      for dir, draw_wall in pairs(walls) do
+        draw_wall(current)
       end
-      if maze[yi][xi].east:IsOpened() then
-        love.graphics.rectangle("fill", pos_x + cell_dim, pos_y, wall_dim, cell_dim)
-      end
-      if maze[yi][xi].south:IsOpened() then
-        love.graphics.rectangle("fill", pos_x, pos_y + cell_dim, cell_dim, wall_dim)
-      end
-      if maze[yi][xi].west:IsOpened() then
-        love.graphics.rectangle("fill", pos_x - wall_dim, pos_y, wall_dim, cell_dim)
-      end
+
     end
   end 
 end

@@ -59,10 +59,6 @@ function generateFullPath(cameFrom, maze)
 end
 
 function astar(maze, x, y)
-  function sleep(n)
-    os.execute('sleep '..n)
-  end
-  
   local open = priorityqueue.new()
   local closed = {}
   local cameFrom = {}
