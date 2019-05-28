@@ -163,7 +163,7 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
       for dir, draw_wall in pairs(walls) do
         draw_wall(current)
       end
-
+      
     end
   end 
 end
