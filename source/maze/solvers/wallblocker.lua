@@ -2,8 +2,8 @@ local Maze = require "maze"
 _ENV = nil
 
 function WallBlocker(maze, xc, yc)
-  if yc > maze:width() or xc > maze:height() then io.write('OUT\n\n\n\n\n') return end
-  if yc == maze:width() and xc == maze:height() then assert(maze[xc][yc].south:IsExit()) maze[xc][yc].visited = true print('finish') return end
+  if yc > maze:width() or xc > maze:height() then return end
+  if yc == maze:width() and xc == maze:height() then assert(maze[xc][yc].south:IsExit()) maze[xc][yc].visited = true return end
   io.write('scanning -> ')
   io.write(xc..','..yc..'\n')
   node = maze[xc][yc]

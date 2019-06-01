@@ -24,7 +24,8 @@ local generators_aliases =
 local solvers_aliases = 
 {
   wallblocker = "Wall Blocker",
-  astar = "A Star",
+  manhattan = "A Star (Manhattan distance)",
+  diagonal = "A Star (Diagonal distance)"
 }
 
 local generators_aliases_rev;
@@ -59,6 +60,7 @@ function love.load()
         local time = love.timer.getTime()
         maze:ResetVisited()
         generators[name](maze)
+        maze:OpenDoors()
         time = love.timer.getTime() - time
         text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
       end
@@ -87,8 +89,10 @@ function love.load()
     button:SetText(name)
     button.OnClick = function(obj)
       maze:ResetVisited()
-      maze:OpenDoors()
-      solvers[algo](maze, 1, 1)      
+      if algo == 'manhattan' or algo == 'diagonal' then
+        solvers['astar'](maze, 1, 1, algo)      
+      else solvers[algo](maze, 1, 1) 
+      end
     end
 
     solvers_list:AddItem(button)
@@ -148,8 +152,7 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
   
   for yi = 1, #maze do
     for xi = 1, #maze[1] do
-      current = maze[yi][xi]
-      doors = { south = current.south, north = current.north, east = current.east, west = current.west}
+      node = maze[yi][xi]
       pos_x = x + (cell_dim + wall_dim) * (xi - 1) + wall_dim
       pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
       love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
@@ -159,8 +162,8 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
         love.graphics.setColor(cell_col)
       end
       
-      for dir, draw_wall in pairs(walls) do
-        draw_wall(current)
+      for _, draw_wall in pairs(walls) do
+        draw_wall(node)
       end
       
     end

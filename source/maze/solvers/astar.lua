@@ -2,6 +2,12 @@ local Maze = require "maze"
 local priorityqueue = require "maze.solvers.PriorityQueue"
 _ENV = nil
 
+local function heuristics(mode)
+  if mode == 'manhattan' then return manhattanDistance
+  elseif mode == 'diagonal' then return diagonalDistance
+  end
+end
+
 --[[ scan to search adjacent nodes ]]--
 function nodeScan(maze, node)
   local neighbornodes = {}
@@ -26,7 +32,7 @@ function nodeScan(maze, node)
 end
 
 --[[ diagonal heuristic ]]--
-function heuristic(...)
+function diagonalDistance(...)
   local arg = {...}
 
   assert(#arg == 2)
@@ -35,6 +41,17 @@ function heuristic(...)
   y = arg[2]
   
   return 100 - math.sqrt(((x-17)^2)+((y-19)^2))
+end
+
+function manhattanDistance(...)
+  local arg = {...}
+
+  assert(#arg == 2)
+
+  x = arg[1]
+  y = arg[2]
+
+  return 100 - math.abs(x-17) + math.abs(y-19)
 end
 
 function nodeInside(set, node)
@@ -53,7 +70,12 @@ function generateFullPath(cameFrom, maze)
   return maze
 end
 
-function astar(maze, x, y)
+function astar(maze, x, y, mode)
+  heuristic = heuristics(mode)
+  run(maze, x, y, heuristic)
+end
+
+function run(maze, x, y, heuristic)
   local open = priorityqueue.new()
   local closed = {}
   local cameFrom = {}
