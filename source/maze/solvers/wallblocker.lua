@@ -1,61 +1,30 @@
 local Maze = require "maze"
 _ENV = nil
 
-function sleep(n)
-    os.execute("sleep " .. tonumber(n))
-end
-
 function WallBlocker(maze, xc, yc)
-  print("scanning node: { "..xc..","..yc.." }")
-  if xc == maze:width() 
-    and yc == maze:height() 
-    and maze[xc][yc].south:IsExit() then
-    return 
-  end
+  if yc > maze:width() or xc > maze:height() then io.write('OUT\n\n\n\n\n') return end
+  if yc == maze:width() and xc == maze:height() then assert(maze[xc][yc].south:IsExit()) maze[xc][yc].visited = true print('finish') return end
+  io.write('scanning -> ')
+  io.write(xc..','..yc..'\n')
+  node = maze[xc][yc]
+  directions = maze.directions
+  walls = maze.getWalls(node)
 
-  if maze[xc][yc].east:IsOpened() and maze[xc][yc].east:IsBlocked() == false then
-    if maze[xc][yc].east:IsVisited() then
-      maze[xc][yc].east:SetBlocked()
-      print('blocking: ('..xc..','..yc..')')
+  for direction, wall in pairs(walls) do
+    new_x = xc+directions[direction]['y']
+    new_y = yc+directions[direction]['x']
+    io.write('node'..xc..','..yc..' ['..direction..'] -> ')
+    io.write(new_x..','..new_y..'\n')
+    print(wall:IsOpened())
+    if wall:IsOpened() and not wall:IsBlocked() then
+      if wall:IsVisited() then
+        wall:SetBlocked()
+        WallBlocker(maze, new_x, new_y)
+      end
+      wall:SetVisited()
+      node.visited = true
+      WallBlocker(maze, new_x, new_y)
     end
-    print( 'East node found: { '..xc..','..yc..' }' )
-    maze[xc][yc].east:SetVisited()
-    maze[xc][yc].visited = true
-    WallBlocker(maze, xc, yc+1)
-  end
-
-  if maze[xc][yc].south:IsOpened() and maze[xc][yc].south:IsBlocked() == false then
-    if maze[xc][yc].south:IsExit() then 
-      maze[xc][yc].visited = true
-      return 
-    end
-    if maze[xc][yc].south:IsVisited() then
-      maze[xc][yc].south:SetBlocked()
-    end
-    print( 'South node found: { '..xc..','..yc..' }' )
-    maze[xc][yc].south:SetVisited()
-    maze[xc][yc].visited = true
-    WallBlocker(maze, xc+1, yc)
-  end
-
-  if maze[xc][yc].west:IsOpened() and maze[xc][yc].west:IsBlocked() == false then
-    if maze[xc][yc].west:IsVisited() then
-      maze[xc][yc].west:SetBlocked()
-    end
-    print( 'West node found: { '..xc..','..yc..' }' )
-    maze[xc][yc].west:SetVisited()
-    maze[xc][yc].visited = true
-    WallBlocker(maze, xc, yc-1)
-  end
-
-  if maze[xc][yc].north:IsOpened() and maze[xc][yc].north:IsBlocked() == false then
-    if maze[xc][yc].north:IsVisited() then
-      maze[xc][yc].north:SetBlocked()
-    end
-    print( 'North node found: { '..xc..','..yc..' }' )
-    maze[xc][yc].north:SetVisited()
-    maze[xc][yc].visited = true
-    WallBlocker(maze, xc-1, yc)
   end
 end
 
