@@ -1,7 +1,6 @@
 local Maze = require "maze"
 local generators = require "maze.generators"
 local loveframes = require "LoveFrames.loveframes"
-local wallblocker = require "maze.solvers.wallblocker"
 local solvers = require "maze.solvers"
 
 local maze;
@@ -25,7 +24,7 @@ local generators_aliases =
 local solvers_aliases = 
 {
   wallblocker = "Wall Blocker",
-  astar = "A Star"
+  astar = "A Star",
 }
 
 local generators_aliases_rev;

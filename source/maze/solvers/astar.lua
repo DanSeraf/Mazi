@@ -1,23 +1,18 @@
 local Maze = require "maze"
 local priorityqueue = require "maze.solvers.PriorityQueue"
+_ENV = nil
 
 --[[ scan to search adjacent nodes ]]--
 function nodeScan(maze, node)
   local neighbornodes = {}
   local directions = maze.directions
   x, y = maze:GetCoord(node)
-
-  doors = { 
-    south = node.south,
-    north = node.north,
-    east = node.east, 
-    west = node.west
-  }
+  walls = maze.getWalls(node)
   
-  for move, door in pairs(doors) do
-    if door:IsOpened() then
-      print('door found: ' .. move)
-      table.insert(neighbornodes, maze[y + directions[move]['y']][x + directions[move]['x']])
+  for direction, wall in pairs(walls) do
+    if wall:IsOpened() then
+      print('door found: ' .. direction)
+      table.insert(neighbornodes, maze[y + directions[direction]['y']][x + directions[direction]['x']])
     end
   end
 
@@ -74,6 +69,7 @@ function astar(maze, x, y)
     current, _ = open:Pop()
     print('analyzing node: ')
     print(maze:GetCoord(current)) 
+
     if current.south:IsExit() then current.visited = true return generateFullPath(cameFrom, maze) end
 
     table.insert(closed, current)
