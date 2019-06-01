@@ -11,7 +11,15 @@ local Maze =
     east  = { x = 1, y = 0 },
     south = { x = 0, y = 1 },
     west  = { x = -1, y = 0 }
-  }
+  },
+  
+  getWalls = function(node) 
+      return {
+        south = node.south,
+        north = node.north,
+        east = node.east,
+        west = node.west
+      } end
 }
 
 function Maze:new( width, height, closed, obj )
