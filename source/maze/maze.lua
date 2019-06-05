@@ -13,7 +13,7 @@ local Maze =
     west  = { x = -1, y = 0 }
   },
   
-  getWalls = function(node) 
+  walls = function(node) 
       return {
         south = node.south,
         north = node.north,
