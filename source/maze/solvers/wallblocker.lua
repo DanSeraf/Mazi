@@ -1,18 +1,15 @@
 local Maze = require "maze"
 _ENV = nil
 
-wasHere = { }
-path = { }
-
 function WallBlocker(maze, x, y)
-    res = recSolve(maze, x, y)
-    if not res then io.write('SOLUTION NOT POSSIBLE!')
-    else 
-      io.write('SOLUTION FOUND') 
+    wasHere = { }
+    path = { }
+    if recSolve(maze, x, y) then
+      io.write('SOLUTION FOUND\n') 
       for _, node in pairs(path) do
         node.visited = true
       end
-    end
+    else io.write('SOLUTION NOT POSSIBLE!') end
 end
 
 function wasThere(what)
@@ -35,7 +32,7 @@ function recSolve(maze, xc, yc)
 
   if yc == maze:width() and xc == maze:height() then 
       assert(node.south:IsExit()) 
-      node.visited = true 
+      table.insert(path, node)
       return true 
   end
   
