@@ -13,5 +13,6 @@ namespace.prim = require "maze.generators.prim"
 namespace.recursive_division = require "maze.generators.recursive_division"
 namespace.sidewinder = require "maze.generators.sidewinder"
 namespace.wilson = require "maze.generators.wilson"
+namespace.rand = require "maze.generators.rand"
 
 return namespace
