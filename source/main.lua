@@ -1,6 +1,7 @@
+local loveframes = require "LoveFrames.loveframes"
+
 local Maze = require "maze"
 local generators = require "maze.generators"
-local loveframes = require "LoveFrames.loveframes"
 local solvers = require "maze.solvers"
 
 local maze;
@@ -18,14 +19,16 @@ local generators_aliases =
   recursive_backtracker = "Recursive Backtracker",
   recursive_division    = "Recursive Division",
   sidewinder            = "Sidewinder",
-  wilson                = "Wilson's algorithm"
+  wilson                = "Wilson's algorithm",
+  rand                  = "Random"
 }
 
 local solvers_aliases = 
 {
   wallblocker = "Wall Blocker",
   manhattan = "A Star (Manhattan distance)",
-  diagonal = "A Star (Diagonal distance)"
+  diagonal = "A Star (Diagonal distance)",
+  deadmen = "Paths explorer"
 }
 
 local generators_aliases_rev;
@@ -90,9 +93,14 @@ function love.load()
     button.OnClick = function(obj)
       maze:ResetVisited()
       if algo == 'manhattan' or algo == 'diagonal' then
+        time = love.timer.getTime()
         solvers['astar'](maze, 1, 1, algo)      
-      else solvers[algo](maze, 1, 1) 
+      else 
+        solvers[algo](maze, 1, 1) 
+        time = love.timer.getTime()
       end
+      time = love.timer.getTime() - time
+      text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
     end
 
     solvers_list:AddItem(button)
