@@ -14,7 +14,7 @@ function nodeScan(maze, node)
   local neighbornodes = {}
   local directions = maze.directions
   x, y = maze:GetCoord(node)
-  walls = maze.getWalls(node)
+  walls = maze.walls(node)
   
   for direction, wall in pairs(walls) do
     if wall:IsOpened() then
@@ -93,10 +93,9 @@ function run(maze, x, y, heuristic)
     
     for _, node in pairs(nodeScan(maze, current)) do
       
+      gScore_att = gScore[current] + 1
       if nodeInside(closed, node) then goto continue end
 
-      gScore_att = gScore[current] + 1
-      
       if not open:Search(node) then open:Add(node, heuristic(maze:GetCoord(node))) 
       elseif gScore_att >= gScore[node] then goto continue
       end
