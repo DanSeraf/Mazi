@@ -46,13 +46,13 @@ function love.load()
   local mframe = loveframes.Create("frame")
   mframe:SetName("Maze generators")
   mframe.width = love.graphics.getWidth() * width_franction
-  mframe.height = love.graphics.getHeight() - margin * 8
+  mframe.height = love.graphics.getHeight() - margin * 23
   mframe.x = love.graphics.getWidth() - mframe.width - margin
   mframe.y = margin
   mframe:SetDraggable(false):ShowCloseButton(false)
   
   local generators_list = loveframes.Create("list", mframe)
-  generators_list:SetPos(margin, 25 + margin):SetSize(mframe.width - margin * 2, mframe.height * 0.475)
+  generators_list:SetPos(margin, 25 + margin):SetSize(mframe.width - margin * 2, mframe.height * 0.744)
   for name, generator in pairs(generators) do
     local button = loveframes.Create("button")
     button:SetText(generators_aliases[name])
@@ -76,14 +76,15 @@ function love.load()
   --[[ Solvers frame ]]--
   local sframe = loveframes.Create("frame")
   sframe:SetName("Solvers")
-  sframe.width = 50
-  sframe.height = love.graphics.getHeight() - margin * 2
+  sframe.width = love.graphics.getWidth() * width_franction
+  sframe.height = love.graphics.getHeight() - margin * 40
   sframe.x = love.graphics.getWidth() - sframe.width - margin
   sframe.y = margin
   sframe:SetDraggable(false):ShowCloseButton(false)
+  sframe:SetPos(550,390)
 
   local solvers_list = loveframes.Create("list", sframe)
-  solvers_list:SetPos(margin, 300 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.125)
+  solvers_list:SetPos(margin, 25 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.375)
   for algo, name in pairs(solvers_aliases) do
     local button = loveframes.Create("button")
     button:SetText(name)
@@ -109,10 +110,10 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setBackgroundColor(100/255, 100/255, 200/255)
-  cell_color = { 150/255, 150/255, 200/255 }
-  wall_color = { 20/255, 20/255, 100/255 }
-  point_col = { 0/255, 100/255, 0/255 }
+  love.graphics.setBackgroundColor(100/255, 100/255, 200/255) 
+  cell_color = { 150/255, 150/255, 200/255 } -- light blue
+  wall_color = { 20/255, 20/255, 100/255 }  -- blue
+  point_col = { 95/255, 95/255, 95/255 } -- white
   draw_maze(maze, 10, 10, 20, 10, cell_color, wall_color, point_col)
   love.graphics.setColor(255, 255, 255)
   
@@ -157,9 +158,15 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
       pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
       love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
       if maze[yi][xi].visited == true then
-        love.graphics.setColor(point_col)
-        love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
-        love.graphics.setColor(cell_col)
+        if yi == 1 and xi == 1 then
+          love.graphics.setColor({255/255,255/255,0/255})
+          love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim) 
+          love.graphics.setColor(cell_col)
+        else
+          love.graphics.setColor(point_col)
+          love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
+          love.graphics.setColor(cell_col)
+        end
       end
       
       for _, draw_wall in pairs(walls) do
