@@ -22,12 +22,6 @@ function nodeScan(maze, node)
       table.insert(neighbornodes, maze[y + directions[direction]['y']][x + directions[direction]['x']])
     end
   end
-
-  print("-------neighbornodes---------")
-  for _, n in pairs(neighbornodes) do
-    print(maze:GetCoord(n))
-  end
-  print("-----------------------------")
   
   return neighbornodes
 end
@@ -84,8 +78,6 @@ function run(maze, x, y, heuristic)
   
   while not open:Empty() do
     current, _ = open:Pop()
-    print('analyzing node: ')
-    print(maze:GetCoord(current)) 
 
     if current.south:IsExit() then current.visited = true return generateFullPath(cameFrom, maze) end
 

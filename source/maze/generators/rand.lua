@@ -1,5 +1,3 @@
--- Aldous-Broder algorithm
--- Detailed description: http://weblog.jamisbuck.org/2011/1/17/maze-generation-aldous-broder-algorithm
 local random = math.random
 local Maze = require "maze"
 _ENV = nil
@@ -8,17 +6,15 @@ local function rand(maze)
   maze:ResetDoors(true)
   local remaining = maze:width() * maze:height() - 1
   
-  -- wander randomly through the maze
   local x, y = random(maze:width()), random(maze:height())
   maze[y][x].visited = true
-  -- till there are unvisited cells left
+
   while remaining ~= 0 do
     local directions = maze:DirectionsFrom(x, y)
     local dirn = directions[random(#directions)]
     local dirn2 = directions[random(#directions)]
     local dirn3 = directions[random(#directions)]
     
-    -- if cell in which we want to go was not visited before - carve in it's direction
     if random(10) < 6 then
         if not maze[dirn.y][dirn.x].visited then
             maze[dirn.y][dirn.x].visited = true

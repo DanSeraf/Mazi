@@ -143,6 +143,14 @@ function Maze:GetCoord(node)
   end
 end
 
+function Maze:SetupVisited()
+    for y = 1, #self do
+        for x = 1, #self[1] do
+            self[y][x].visited = false 
+        end
+    end
+end
+
 Maze.__tostring = Maze.tostring
 
 function Maze:CreateDoor(closed)
