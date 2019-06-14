@@ -1,10 +1,7 @@
 local Maze = require "maze"
 _ENV = nil
 
--- keep track of visited nodes
--- so you can check if the next node was readed by another path finder
--- TODO have to sync the two tables of available paths
-
+-- generate a copy of a given table
 getCopy = function(orig) 
   copy = { }
   for _, el in pairs(orig) do
@@ -12,19 +9,6 @@ getCopy = function(orig)
   end
 
   return copy
-end
-
-pathprint = function(maze, path)
-  io.write('analyzing ')
-  print(path)
-  io.write('\navailable paths:\n')
-  for _, pat in pairs(path) do
-    io.write('id: ')
-    print(pat)
-    for _, node in pairs(pat) do
-      print(maze:GetCoord(node))
-    end
-  end
 end
 
 -- return possible directions 
@@ -60,8 +44,6 @@ end
 -- current path and insert it in the available_paths table 
 moveit = function(maze, path_id, avail_copy)
   path = avail_copy[path_id]
-  io.write('analyzing path: ')
-  print(path)
   node = path[#path]
   directions = maze.directions
   walls = maze.walls(node)
@@ -71,12 +53,8 @@ moveit = function(maze, path_id, avail_copy)
   
   -- if only one direction is possible then update the current path
   if len == 1 then 
-    io.write('updating\n')
     newx = x + directions[dir]['y']
     newy = y + directions[dir]['x']
-    print(newx)
-    print(newy)
-    print('----------------')
     if newx == 0 or newy == 0 then return false end
 
     if not maze[newx][newy].visited and outMaze(newx, newy) then
@@ -89,10 +67,6 @@ moveit = function(maze, path_id, avail_copy)
     for direction, wall in pairs(walls) do
       newx = x + directions[direction]['y']
       newy = y + directions[direction]['x']
-
-      io.write('-new coordinate ['..direction..'] -> (')
-      io.write(newx..','..newy..') ')
-      print(wall:IsOpened())
 
       -- if wall is opened and the new node is not discovered yet, generate a clone 
       -- of the path and insert it in the available paths
@@ -108,7 +82,7 @@ moveit = function(maze, path_id, avail_copy)
       end
     end
   end
-  print(moved) 
+  
   return moved 
 end
 
@@ -124,22 +98,13 @@ readAvailable = function(maze, available_paths)
     toremove = { }    
     for path_id, path in pairs(avail_copy) do
       if not moveit(maze, path_id, avail_copy) then
-        if path[#path].south:IsExit() then correct_path_id = path_id goto continue end
-        print('toeuhn')
-        print(path[#path].south:IsExit())
-        io.write('removing path :')
-        print(path)
-        --table.remove(available_paths, path_id)
+        if path[#path].south:IsExit() then return available_paths[path_id], true end
         table.insert(toremove, path)
-        io.write('SITUATION \n')
       end
     end
     removePaths(toremove, available_paths)
     if #available_paths == 0 then return available_paths, false end
   end
-  ::continue::
-  
-  return available_paths[correct_path_id], true
 end
 
 local function deadmen(maze, x, y)
@@ -153,18 +118,13 @@ local function deadmen(maze, x, y)
    
   -- if a solution is found then generate the current path
   path, res = readAvailable(maze, available_paths)
- 
-  print(path)
-  print(res)
-
+  print('Deadmen completed')
   if not res then maze:ResetVisited() print("there is no Exit!") end
 
   if res then 
-    io.write("Exit found!") 
+    print("Exit found!") 
     maze:ResetVisited()
-    for _, node in pairs(path) do
-      node.visited = true
-    end
+    return path
   end
 
 end
