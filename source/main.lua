@@ -7,6 +7,8 @@ local solvers = require "maze.solvers"
 local maze;
 local text;
 
+local initTime = 0;
+
 local generators_aliases =
 {
   aldous_broder         = "Aldous - Broder",
@@ -32,8 +34,13 @@ local solvers_aliases =
 }
 
 local generators_aliases_rev;
+local solver_status = false;
+local solver_chosen = {};
+local path_solved = {};
+local solved = false;
 
 function love.load()
+
   if arg[#arg] == "-debug" then require("mobdebug").start() end
   
   generators_aliases_rev = {}
@@ -95,10 +102,18 @@ function love.load()
       maze:ResetVisited()
       if algo == 'manhattan' or algo == 'diagonal' then
         time = love.timer.getTime()
-        solvers['astar'](maze, 1, 1, algo)      
+        solvers['astar'](maze, 1, 1, algo)
+        initTime = love.timer.getTime()
+        path_solved = solvers[solver_chosen[1]](maze,1,1)
+        solved = true
+      
       else 
-        solvers[algo](maze, 1, 1) 
+        table.insert(solver_chosen, 'wallblocker')
         time = love.timer.getTime()
+        initTime = love.timer.getTime()
+        solver_status = true
+        path_solved = solvers[algo](maze,1,1)
+        solved = true
       end
       time = love.timer.getTime() - time
       text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
@@ -114,7 +129,19 @@ function love.load()
 end
 
 function love.update(dt)
-  loveframes.update(dt) 
+  loveframes.update(dt)
+  print(path_solved)
+  
+  if solved then
+    path_solved[#path_solved].visited = true
+    table.remove(path_solved, #path_solved)
+    love.timer.sleep(0.2)
+  end
+  if #path_solved == 0 then 
+    solved = false
+  end
+
+
 end
 
 function love.draw()
@@ -123,8 +150,8 @@ function love.draw()
   wall_color = { 20/255, 20/255, 100/255 }  -- blue
   point_col = { 95/255, 95/255, 95/255 } -- white
   draw_maze(maze, 10, 10, 20, 10, cell_color, wall_color, point_col)
+  draw_path(maze, 10, 10, 20, 10, cell_color, wall_color, point_col)
   love.graphics.setColor(255, 255, 255)
-  
   loveframes.draw()
 end
  
@@ -165,6 +192,25 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
       pos_x = x + (cell_dim + wall_dim) * (xi - 1) + wall_dim
       pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
       love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
+      
+      for _, draw_wall in pairs(walls) do
+        draw_wall(node)
+      end
+      
+    end
+  end 
+end
+
+
+function draw_path(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col)
+  
+  for yi = 1, #maze do
+    for xi = 1, #maze[1] do
+      node = maze[yi][xi]
+      pos_x = x + (cell_dim + wall_dim) * (xi - 1) + wall_dim
+      pos_y = y + (cell_dim + wall_dim) * (yi - 1) + wall_dim
+      love.graphics.rectangle("fill", pos_x, pos_y, cell_dim, cell_dim)
+
       if maze[yi][xi].visited == true then
         if yi == 1 and xi == 1 then
           love.graphics.setColor({255/255,255/255,0/255})
@@ -177,9 +223,6 @@ function draw_maze(maze, x, y, cell_dim, wall_dim, cell_col, wall_col, point_col
         end
       end
       
-      for _, draw_wall in pairs(walls) do
-        draw_wall(node)
-      end
       
     end
   end 

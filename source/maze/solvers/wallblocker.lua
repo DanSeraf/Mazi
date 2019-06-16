@@ -6,9 +6,7 @@ function WallBlocker(maze, x, y)
     path = { }
     if recSolve(maze, x, y) then
       io.write('SOLUTION FOUND\n') 
-      for _, node in pairs(path) do
-        node.visited = true
-      end
+      return path
     else io.write('SOLUTION NOT POSSIBLE!') end
 end
 
