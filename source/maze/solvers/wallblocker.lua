@@ -4,10 +4,20 @@ _ENV = nil
 function WallBlocker(maze, x, y)
     wasHere = { }
     path = { }
-    if recSolve(maze, x, y) then
+    if recSolve(maze, x, y, path) then
       io.write('SOLUTION FOUND\n') 
-      return path
-    else io.write('SOLUTION NOT POSSIBLE!') end
+      return reversePath(path,maze), true
+    else io.write('SOLUTION NOT POSSIBLE!') return path, false end
+end
+
+function reversePath(path, maze)
+  new_path = { }
+  for i = #path, 1, -1 do
+    table.insert(new_path, path[i])
+  end
+      print(#path)
+
+  return new_path
 end
 
 function wasThere(what)
@@ -18,7 +28,7 @@ function wasThere(what)
   return false
 end
 
-function recSolve(maze, xc, yc)
+function recSolve(maze, xc, yc, path)
   io.write('scanning -> ')
   io.write(xc..','..yc..'\n')
 
@@ -43,7 +53,7 @@ function recSolve(maze, xc, yc)
     io.write('node'..xc..','..yc..' ['..direction..'] -> ')
     io.write(new_x..','..new_y..'\n')
 
-    if wall:IsOpened() and recSolve(maze, new_x, new_y) then 
+    if wall:IsOpened() and recSolve(maze, new_x, new_y, path) then 
       table.insert(path, maze[xc][yc])
       return true
     end
