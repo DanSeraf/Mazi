@@ -6,6 +6,8 @@ local solvers = require "maze.solvers"
 
 local maze;
 local text;
+local text_generator;
+local text_solver;
 
 local initTime = 0;
 
@@ -34,10 +36,8 @@ local solvers_aliases =
 }
 
 local generators_aliases_rev;
-local solver_status = false;
-local solver_chosen = {};
 local path_solved = {};
-local solved = false;
+local printing = false;
 
 function love.load()
 
@@ -102,19 +102,18 @@ function love.load()
       maze:ResetVisited()
       if algo == 'manhattan' or algo == 'diagonal' then
         time = love.timer.getTime()
-        solvers['astar'](maze, 1, 1, algo)
+        path_solved, solved = solvers['astar'](maze, 1, 1, algo)
         initTime = love.timer.getTime()
-        path_solved = solvers[solver_chosen[1]](maze,1,1)
-        solved = true
-      
+        if solved then printing = true end
       else 
-        table.insert(solver_chosen, 'wallblocker')
         time = love.timer.getTime()
         initTime = love.timer.getTime()
-        solver_status = true
-        path_solved = solvers[algo](maze,1,1)
-        solved = true
+        path_solved, solved = solvers[algo](maze,1,1)
+            print(maze:GetCoord(path_solved[1]))
+
+        if solved then printing = true end
       end
+      maze:ResetVisited() 
       time = love.timer.getTime() - time
       text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
     end
@@ -130,17 +129,16 @@ end
 
 function love.update(dt)
   loveframes.update(dt)
-  print(path_solved)
+    print(maze:GetCoord(path_solved[1]))
   
-  if solved then
-    path_solved[#path_solved].visited = true
-    table.remove(path_solved, #path_solved)
+  if printing then
+    path_solved[1].visited = true
+    table.remove(path_solved, 1)
     love.timer.sleep(0.2)
   end
   if #path_solved == 0 then 
-    solved = false
+    printing = false
   end
-
 
 end
 

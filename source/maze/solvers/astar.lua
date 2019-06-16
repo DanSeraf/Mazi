@@ -99,11 +99,12 @@ function run(maze, x, y, heuristic)
       ::continue::
     end
   end
+  return cameFrom
 end
 
 function astar(maze, x, y, mode)
   assert(mode == 'manhattan' or 'diagonal')
-  run(maze, x, y, heuristics(mode))
+  path = run(maze, x, y, heuristics(mode))
 end
 
 return astar

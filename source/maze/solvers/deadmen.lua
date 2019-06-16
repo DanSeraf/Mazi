@@ -119,12 +119,11 @@ local function deadmen(maze, x, y)
   -- if a solution is found then generate the current path
   path, res = readAvailable(maze, available_paths)
   print('Deadmen completed')
-  if not res then maze:ResetVisited() print("there is no Exit!") end
+  if not res then print("there is no Exit!") return path, false end
 
   if res then 
     print("Exit found!") 
-    maze:ResetVisited()
-    return path
+    return path, true
   end
 
 end
