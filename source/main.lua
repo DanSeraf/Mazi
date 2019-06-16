@@ -67,12 +67,14 @@ function love.load()
     local button = loveframes.Create("button")
     button:SetText(generators_aliases[name])
     button.OnClick = function(obj)
-        local time = love.timer.getTime()
-        maze:ResetVisited()
-        generators[name](maze)
-        maze:OpenDoors()
-        time = love.timer.getTime() - time
-        text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
+        if not printing then
+          local time = love.timer.getTime()
+          maze:ResetVisited()
+          generators[name](maze)
+          maze:OpenDoors()
+          time = love.timer.getTime() - time
+          text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
+        end
       end
     
     generators_list:AddItem(button)
@@ -99,23 +101,23 @@ function love.load()
     local button = loveframes.Create("button")
     button:SetText(name)
     button.OnClick = function(obj)
-      maze:ResetVisited()
-      if algo == 'manhattan' or algo == 'diagonal' then
-        time = love.timer.getTime()
-        path_solved, solved = solvers['astar'](maze, 1, 1, algo)
-        initTime = love.timer.getTime()
-        if solved then printing = true end
-      else 
-        time = love.timer.getTime()
-        initTime = love.timer.getTime()
-        path_solved, solved = solvers[algo](maze,1,1)
-            print(maze:GetCoord(path_solved[1]))
-
-        if solved then printing = true end
+      if not printing then
+        maze:ResetVisited()
+        if algo == 'manhattan' or algo == 'diagonal' then
+          time = love.timer.getTime()
+          solvers['astar'](maze, 1, 1, algo)
+          initTime = love.timer.getTime()
+          if solved then printing = true end
+        else 
+          time = love.timer.getTime()
+          initTime = love.timer.getTime()
+          path_solved, solved = solvers[algo](maze,1,1)
+          if solved then printing = true end
+          maze:ResetVisited() 
+        end
+        time = love.timer.getTime() - time
+        text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
       end
-      maze:ResetVisited() 
-      time = love.timer.getTime() - time
-      text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
     end
 
     solvers_list:AddItem(button)
@@ -129,15 +131,14 @@ end
 
 function love.update(dt)
   loveframes.update(dt)
-    print(maze:GetCoord(path_solved[1]))
   
   if printing then
     path_solved[1].visited = true
     table.remove(path_solved, 1)
     love.timer.sleep(0.2)
-  end
-  if #path_solved == 0 then 
-    printing = false
+    if #path_solved == 0 then 
+        printing = false
+    end
   end
 
 end

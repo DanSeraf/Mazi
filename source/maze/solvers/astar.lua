@@ -18,7 +18,6 @@ function nodeScan(maze, node)
   
   for direction, wall in pairs(walls) do
     if wall:IsOpened() then
-      print('door found: ' .. direction)
       table.insert(neighbornodes, maze[y + directions[direction]['y']][x + directions[direction]['x']])
     end
   end
@@ -56,12 +55,10 @@ function nodeInside(set, node)
   return false
 end
 
-function generateFullPath(cameFrom, maze)
+function generateFullPath(cameFrom)
   for _, n in pairs(cameFrom) do
     n.visited = true
   end
-
-  return maze
 end
 
 function run(maze, x, y, heuristic)
@@ -70,28 +67,31 @@ function run(maze, x, y, heuristic)
   local cameFrom = {}
   local gScore = {}
   local fScore = {}
-  
+
   maze[x][y].visited = true
   gScore[maze[x][y]] = 0
   fScore[maze[x][y]] = heuristic(x, y)
   open:Add(maze[x][y], heuristic(x, y))
-  
+
   while not open:Empty() do
     current, _ = open:Pop()
 
-    if current.south:IsExit() then current.visited = true return generateFullPath(cameFrom, maze) end
+    if current.south:IsExit() then 
+      current.visited = true
+      return generateFullPath(cameFrom)
+    end
 
     table.insert(closed, current)
-    
+
     for _, node in pairs(nodeScan(maze, current)) do
-      
+
       gScore_att = gScore[current] + 1
       if nodeInside(closed, node) then goto continue end
 
       if not open:Search(node) then open:Add(node, heuristic(maze:GetCoord(node))) 
       elseif gScore_att >= gScore[node] then goto continue
       end
-      
+
       cameFrom[node] = current
       gScore[node] = gScore[current]
       fScore[node] = gScore[node] + heuristic(maze:GetCoord(node))
@@ -99,12 +99,12 @@ function run(maze, x, y, heuristic)
       ::continue::
     end
   end
-  return cameFrom
+  print('There is no exit!')
 end
 
 function astar(maze, x, y, mode)
   assert(mode == 'manhattan' or 'diagonal')
-  path = run(maze, x, y, heuristics(mode))
+  run(maze, x, y, heuristics(mode))
 end
 
 return astar
