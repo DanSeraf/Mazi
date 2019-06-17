@@ -5,7 +5,6 @@ local generators = require "maze.generators"
 local solvers = require "maze.solvers"
 
 local maze;
-local text;
 local text_generator;
 local text_solver;
 
@@ -72,15 +71,15 @@ function love.load()
         generators[name](maze)
         maze:OpenDoors()
         time = love.timer.getTime() - time
-        text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
+        text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
       end
     
     generators_list:AddItem(button)
   end
   
-  text = loveframes.Create("text", mframe)
-  text:SetPos(margin, generators_list.y + generators_list.height + 50)
-  text:SetSize(mframe.width - margin * 2, mframe.height * 0.3)
+  text_generator = loveframes.Create("text", mframe)
+  text_generator:SetPos(margin, generators_list.y + generators_list.height + 50)
+  text_generator:SetSize(mframe.width - margin * 2, mframe.height * 0.3)
   --[[ end of frame ]]--
   
   --[[ Solvers frame ]]--
@@ -92,9 +91,10 @@ function love.load()
   sframe.y = margin
   sframe:SetDraggable(false):ShowCloseButton(false)
   sframe:SetPos(550,390)
+  
 
   local solvers_list = loveframes.Create("list", sframe)
-  solvers_list:SetPos(margin, 25 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.375)
+  solvers_list:SetPos(margin, 25 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.50)
   for algo, name in pairs(solvers_aliases) do
     local button = loveframes.Create("button")
     button:SetText(name)
@@ -109,17 +109,19 @@ function love.load()
         time = love.timer.getTime()
         initTime = love.timer.getTime()
         path_solved, solved = solvers[algo](maze,1,1)
-            print(maze:GetCoord(path_solved[1]))
 
         if solved then printing = true end
       end
       maze:ResetVisited() 
       time = love.timer.getTime() - time
-      text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
+      text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
     end
 
     solvers_list:AddItem(button)
   end
+  text_solver = loveframes.Create("text", sframe)
+  text_solver:SetPos(margin, solvers_list.y + solvers_list.height + 20)
+  text_solver:SetSize(sframe.width - margin * 2, sframe.height * 0.3)
   --[[ end of frame]]--
   
   -- Maze creation and misc
@@ -129,7 +131,6 @@ end
 
 function love.update(dt)
   loveframes.update(dt)
-    print(maze:GetCoord(path_solved[1]))
   
   if printing then
     path_solved[1].visited = true
