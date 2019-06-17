@@ -70,7 +70,7 @@ function love.load()
           generators[name](maze)
           maze:OpenDoors()
           time = love.timer.getTime() - time
-          text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
+          text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
         end
       end
     
@@ -112,7 +112,7 @@ function love.load()
           maze:ResetVisited() 
         end
         time = love.timer.getTime() - time
-        text:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
+        text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
       end
     end
 
