@@ -9,8 +9,6 @@ local text;
 local text_generator;
 local text_solver;
 
-local initTime = 0;
-
 local generators_aliases =
 {
   aldous_broder         = "Aldous - Broder",
@@ -106,11 +104,9 @@ function love.load()
         if algo == 'manhattan' or algo == 'diagonal' then
           time = love.timer.getTime()
           solvers['astar'](maze, 1, 1, algo)
-          initTime = love.timer.getTime()
           if solved then printing = true end
         else 
           time = love.timer.getTime()
-          initTime = love.timer.getTime()
           path_solved, solved = solvers[algo](maze,1,1)
           if solved then printing = true end
           maze:ResetVisited() 
