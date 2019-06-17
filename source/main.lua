@@ -66,7 +66,6 @@ function love.load()
     local button = loveframes.Create("button")
     button:SetText(generators_aliases[name])
     button.OnClick = function(obj)
-<<<<<<< HEAD
         if not printing then
           local time = love.timer.getTime()
           maze:ResetVisited()
@@ -75,14 +74,6 @@ function love.load()
           time = love.timer.getTime() - time
           text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
         end
-=======
-        local time = love.timer.getTime()
-        maze:ResetVisited()
-        generators[name](maze)
-        maze:OpenDoors()
-        time = love.timer.getTime() - time
-        text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
->>>>>>> 36a61f929ac4ea2b0461fdd0af9ae9cb92476f2b
       end
     
     generators_list:AddItem(button)
