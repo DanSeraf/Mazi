@@ -104,7 +104,6 @@ function love.load()
         if algo == 'manhattan' or algo == 'diagonal' then
           time = love.timer.getTime()
           solvers['astar'](maze, 1, 1, algo)
-          if solved then printing = true end
         else 
           time = love.timer.getTime()
           path_solved, solved = solvers[algo](maze,1,1)
