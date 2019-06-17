@@ -5,7 +5,6 @@ local generators = require "maze.generators"
 local solvers = require "maze.solvers"
 
 local maze;
-local text;
 local text_generator;
 local text_solver;
 
@@ -67,6 +66,7 @@ function love.load()
     local button = loveframes.Create("button")
     button:SetText(generators_aliases[name])
     button.OnClick = function(obj)
+<<<<<<< HEAD
         if not printing then
           local time = love.timer.getTime()
           maze:ResetVisited()
@@ -75,14 +75,22 @@ function love.load()
           time = love.timer.getTime() - time
           text:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
         end
+=======
+        local time = love.timer.getTime()
+        maze:ResetVisited()
+        generators[name](maze)
+        maze:OpenDoors()
+        time = love.timer.getTime() - time
+        text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
+>>>>>>> 36a61f929ac4ea2b0461fdd0af9ae9cb92476f2b
       end
     
     generators_list:AddItem(button)
   end
   
-  text = loveframes.Create("text", mframe)
-  text:SetPos(margin, generators_list.y + generators_list.height + 50)
-  text:SetSize(mframe.width - margin * 2, mframe.height * 0.3)
+  text_generator = loveframes.Create("text", mframe)
+  text_generator:SetPos(margin, generators_list.y + generators_list.height + 50)
+  text_generator:SetSize(mframe.width - margin * 2, mframe.height * 0.3)
   --[[ end of frame ]]--
   
   --[[ Solvers frame ]]--
@@ -94,9 +102,10 @@ function love.load()
   sframe.y = margin
   sframe:SetDraggable(false):ShowCloseButton(false)
   sframe:SetPos(550,390)
+  
 
   local solvers_list = loveframes.Create("list", sframe)
-  solvers_list:SetPos(margin, 25 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.375)
+  solvers_list:SetPos(margin, 25 + margin):SetSize(sframe.width - margin * 2, sframe.height * 0.50)
   for algo, name in pairs(solvers_aliases) do
     local button = loveframes.Create("button")
     button:SetText(name)
@@ -122,6 +131,9 @@ function love.load()
 
     solvers_list:AddItem(button)
   end
+  text_solver = loveframes.Create("text", sframe)
+  text_solver:SetPos(margin, solvers_list.y + solvers_list.height + 20)
+  text_solver:SetSize(sframe.width - margin * 2, sframe.height * 0.3)
   --[[ end of frame]]--
   
   -- Maze creation and misc
