@@ -77,8 +77,8 @@ function run(maze, x, y, heuristic)
     current, _ = open:Pop()
 
     if current.south:IsExit() then 
-      current.visited = true
-      return generateFullPath(cameFrom)
+      table.insert(cameFrom, current)
+      return cameFrom
     end
 
     table.insert(closed, current)
@@ -91,8 +91,8 @@ function run(maze, x, y, heuristic)
       if not open:Search(node) then open:Add(node, heuristic(maze:GetCoord(node))) 
       elseif gScore_att >= gScore[node] then goto continue
       end
-
-      cameFrom[node] = current
+        
+      table.insert(cameFrom, current)
       gScore[node] = gScore[current]
       fScore[node] = gScore[node] + heuristic(maze:GetCoord(node))
 
@@ -104,7 +104,8 @@ end
 
 function astar(maze, x, y, mode)
   assert(mode == 'manhattan' or 'diagonal')
-  run(maze, x, y, heuristics(mode))
+  cm = run(maze, x, y, heuristics(mode))
+  return cm, true
 end
 
 return astar

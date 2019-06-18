@@ -103,13 +103,15 @@ function love.load()
         maze:ResetVisited()
         if algo == 'manhattan' or algo == 'diagonal' then
           time = love.timer.getTime()
-          solvers['astar'](maze, 1, 1, algo)
+          path_solved, solved = solvers['astar'](maze, 1, 1, algo)
         else 
           time = love.timer.getTime()
           path_solved, solved = solvers[algo](maze,1,1)
-          if solved then printing = true end
-          maze:ResetVisited() 
         end
+        
+        if solved then printing = true end
+        
+        maze:ResetVisited() 
         time = love.timer.getTime() - time
         text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
       end
