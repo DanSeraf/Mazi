@@ -78,7 +78,7 @@ function run(maze, x, y, heuristic)
 
     if current.south:IsExit() then 
       table.insert(cameFrom, current)
-      return cameFrom
+      return cameFrom, true
     end
 
     table.insert(closed, current)
@@ -100,12 +100,12 @@ function run(maze, x, y, heuristic)
     end
   end
   print('There is no exit!')
+  return cameFrom, false 
 end
 
 function astar(maze, x, y, mode)
   assert(mode == 'manhattan' or 'diagonal')
-  cm = run(maze, x, y, heuristics(mode))
-  return cm, true
+  return run(maze, x, y, heuristics(mode))
 end
 
 return astar
