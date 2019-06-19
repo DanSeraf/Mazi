@@ -88,10 +88,7 @@ end
 
 -- return true if shortest path is found
 readAvailable = function(maze, available_paths)
-  exit = true
-  correct_path_id = 0
-
-  while true and exit do
+  while true do
     avail_copy = getCopy(available_paths)
     toremove = { }    
     for path_id, path in pairs(avail_copy) do
