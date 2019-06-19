@@ -37,6 +37,7 @@ local solvers_aliases =
 local generators_aliases_rev;
 local path_solved = {};
 local printing = false;
+local lastmaze = nil
 
 function love.load()
 
@@ -70,6 +71,7 @@ function love.load()
           local time = love.timer.getTime()
           maze:ResetVisited()
           generators[name](maze)
+          lastmaze = obj:GetText()
           maze:OpenDoors()
           time = love.timer.getTime() - time
           text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
@@ -114,7 +116,7 @@ function love.load()
         maze:ResetVisited() 
         if solved then printing = true end
         time = love.timer.getTime() - time
-        logger:write("[" ..tostring(maze).. "] " ..algo.. " ".. time)
+        logger:write("[" ..lastmaze.. "] " ..algo.. " ".. time)
         text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
       end
     end
