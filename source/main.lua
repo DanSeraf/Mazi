@@ -3,6 +3,7 @@ local loveframes = require "LoveFrames.loveframes"
 local Maze = require "maze"
 local generators = require "maze.generators"
 local solvers = require "maze.solvers"
+local logger = require "logger"
 
 local maze;
 local text_generator;
@@ -112,8 +113,8 @@ function love.load()
         
         maze:ResetVisited() 
         if solved then printing = true end
-        
         time = love.timer.getTime() - time
+        logger:write("[" ..tostring(maze).. "] " ..algo.. " ".. time)
         text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
       end
     end

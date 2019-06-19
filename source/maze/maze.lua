@@ -151,7 +151,7 @@ function Maze:SetupVisited()
     end
 end
 
-Maze.__tostring = Maze.tostring
+--Maze.__tostring = Maze.tostring
 
 function Maze:CreateDoor(closed)
   local door = {}
