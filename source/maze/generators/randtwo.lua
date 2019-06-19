@@ -12,15 +12,11 @@ local function randtwo(maze)
   while remaining ~= 0 do
     local directions = maze:DirectionsFrom(x, y)
     local dirn = directions[random(#directions)]
-    local dirn2 = directions[random(#directions)]
-    local dirn3 = directions[random(#directions)]
     
     if random(10) < 6 then
         if not maze[dirn.y][dirn.x].visited then
             maze[dirn.y][dirn.x].visited = true
             maze[y][x][dirn.name]:Open()
-            maze[y][x][dirn2.name]:Open()
-            maze[y][x][dirn3.name]:Open()
             remaining = remaining - 1
         end
     end

@@ -21,7 +21,8 @@ local generators_aliases =
   recursive_division    = "Recursive Division",
   sidewinder            = "Sidewinder",
   wilson                = "Wilson's algorithm",
-  rand                  = "Random"
+  rand                  = "Random",
+  randtwo               = "Random (blocked)"
 }
 
 local solvers_aliases = 
@@ -109,9 +110,9 @@ function love.load()
           path_solved, solved = solvers[algo](maze,1,1)
         end
         
+        maze:ResetVisited() 
         if solved then printing = true end
         
-        maze:ResetVisited() 
         time = love.timer.getTime() - time
         text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.9fs", obj:GetText(), time))
       end
