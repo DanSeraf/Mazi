@@ -15,7 +15,6 @@ function reversePath(path, maze)
   for i = #path, 1, -1 do
     table.insert(new_path, path[i])
   end
-      print(#path)
 
   return new_path
 end

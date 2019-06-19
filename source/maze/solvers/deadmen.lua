@@ -92,8 +92,6 @@ readAvailable = function(maze, available_paths)
   correct_path_id = 0
 
   while true and exit do
-    -- first_path = available_paths[1]
-    -- if first_path[#first_path].south:IsExit() then goto continue end
     avail_copy = getCopy(available_paths)
     toremove = { }    
     for path_id, path in pairs(avail_copy) do
@@ -103,6 +101,7 @@ readAvailable = function(maze, available_paths)
       end
     end
     removePaths(toremove, available_paths)
+    -- if there aren't available paths there is no exit 
     if #available_paths == 0 then return available_paths, false end
   end
 end
