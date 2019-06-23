@@ -5,9 +5,8 @@ function WallBlocker(maze, x, y)
     wasHere = { }
     path = { }
     if recSolve(maze, x, y, path) then
-      io.write('Exit found!\n') 
       return reversePath(path,maze), true
-    else print('Exit not found!') return path, false end
+    else return path, false end
 end
 
 function reversePath(path, maze)

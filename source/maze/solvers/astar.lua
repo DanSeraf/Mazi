@@ -99,7 +99,6 @@ function run(maze, x, y, heuristic)
       ::continue::
     end
   end
-  print('There is no exit!')
   return cameFrom, false 
 end
 

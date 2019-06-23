@@ -114,14 +114,8 @@ local function deadmen(maze, x, y)
    
   -- if a solution is found then generate the current path
   path, res = readAvailable(maze, available_paths)
-  print('Deadmen completed')
-  if not res then print("there is no Exit!") return path, false end
-
-  if res then 
-    print("Exit found!") 
-    return path, true
-  end
-
+  if not res then print("there is no Exit!") return path, false 
+  else return path, true end
 end
 
 return deadmen

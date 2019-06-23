@@ -38,10 +38,12 @@ local generators_aliases_rev;
 local path_solved = {};
 local printing = false;
 
+exit = function(status) if status == true then return "Exit found!" else return "No Exit found!" end end
+
 function love.load()
 
   if arg[#arg] == "-debug" then require("mobdebug").start() end
-  
+
   generators_aliases_rev = {}
   for key, value in pairs(generators_aliases) do
     generators_aliases_rev[value] = key
@@ -72,8 +74,8 @@ function love.load()
           generators[name](maze)
           maze:OpenDoors()
           time = love.timer.getTime() - time
-          logger:write('---------------'.. obj:GetText() ..'-----------------')
-          text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs", obj:GetText(), time))
+          logger:write(string.format('---------------\nGenerator: %s\nTime: %.4fs\n---------------', obj:GetText(), time))
+          text_generator:SetText(string.format("Algorithm: %s\nTime: %.4fs\n\n", obj:GetText(), time))
         end
       end
     
@@ -115,8 +117,8 @@ function love.load()
         maze:ResetVisited() 
         if solved then printing = true end
         time = love.timer.getTime() - time
-        logger:write(string.format("%s %.8fs", algo, time))
-        text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.8fs", obj:GetText(), time))
+        logger:write(string.format("Solver: %s\nTime: %.8fs\n[%s]\n---------------", algo, time, exit(solved)))
+        text_solver:SetText(string.format("\n\nSolver: %s\nTime: %.8fs\nSteps: %d", obj:GetText(), time, #path_solved))
       end
     end
 
@@ -135,13 +137,11 @@ end
 function love.update(dt)
   loveframes.update(dt)
   
-  if printing then
+  if printing and #path_solved ~= 0 then
     path_solved[1].visited = true
     table.remove(path_solved, 1)
     love.timer.sleep(0.2)
-    if #path_solved == 0 then 
-        printing = false
-    end
+  elseif #path_solved == 0 then printing = false
   end
 
 end
