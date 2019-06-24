@@ -5,7 +5,6 @@ function logger:write(text)
     file = io.open('log.txt', 'a+')
     io.output(file)
     io.write(text..'\n')
-    io.close(file)
 end
 
 return logger

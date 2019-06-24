@@ -136,7 +136,7 @@ end
 
 function love.update(dt)
   loveframes.update(dt)
-  
+    
   if printing and #path_solved ~= 0 then
     path_solved[1].visited = true
     table.remove(path_solved, 1)

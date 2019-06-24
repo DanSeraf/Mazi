@@ -55,13 +55,17 @@ function nodeInside(set, node)
   return false
 end
 
-function generateFullPath(cameFrom)
-  for _, n in pairs(cameFrom) do
-    n.visited = true
-  end
-end
-
 function run(maze, x, y, heuristic)
+  
+  -- Remove clones in the path_solved table
+  rmClones = function(l)
+    nl = { }
+    for _, e in pairs(l) do
+      if not nodeInside(nl, e) then table.insert(nl, e) end
+    end
+    return nl
+  end
+
   local open = priorityqueue.new()
   local closed = {}
   local cameFrom = {}
@@ -78,13 +82,12 @@ function run(maze, x, y, heuristic)
 
     if current.south:IsExit() then 
       table.insert(cameFrom, current)
-      return cameFrom, true
+      return rmClones(cameFrom), true
     end
 
     table.insert(closed, current)
 
     for _, node in pairs(nodeScan(maze, current)) do
-
       gScore_att = gScore[current] + 1
       if nodeInside(closed, node) then goto continue end
 
