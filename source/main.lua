@@ -140,7 +140,6 @@ function love.update(dt)
   if printing and #path_solved ~= 0 then
     path_solved[1].visited = true
     table.remove(path_solved, 1)
-    love.timer.sleep(0.2)
   elseif #path_solved == 0 then printing = false
   end
 
